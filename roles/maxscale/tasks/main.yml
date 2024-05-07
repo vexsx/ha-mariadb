@@ -1,0 +1,60 @@
+---
+
+# Setup prerequirment
+- name: Install prerequirment
+  apt:
+    update_cache: yes
+    pkg:
+      - curl
+
+# setup maxscale
+- name: add mariadb repo
+  shell: sudo curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash
+
+
+- name: Install maxscale
+  apt:
+    update_cache: yes
+    pkg:
+      - maxscale
+      - mariadb-client
+
+
+- name: Stop MaxScale service
+  systemd:
+    name: maxscale.service
+    state: stopped
+          
+# Increase "net/core" subsys registered per network namespace
+- name: Increase net.core.somaxconn
+  sysctl: >
+    name=net.core.somaxconn
+    value=65535
+    state=present
+    ignoreerrors=yes
+
+- name: Create MySQL user
+  mysql_user:
+    name: "{{ maxscale_user }}"
+    host: "{{ hostvars['maxscale']['ansible_host'] }}"
+    password: "{{ maxscale_pass }}"
+    priv: "{{ item }}"
+  with_items:
+    - "mysql.user:SELECT"
+    - "mysql.db:SELECT"
+    - "mysql.tables_priv:SELECT"
+    - "*.*:SHOW DATABASES"
+
+# Configure Mariadb maxscale
+- name: " Add maxscale.cnf"
+  template:
+    src: maxscale.cnf.j2
+    dest: /etc/maxscale.cnf
+    mode: "0644"
+    owner: "nobody"
+  register: maxscale.cnf
+
+- name: Stop MaxScale service
+  systemd:
+    name: maxscale.service
+    state: started

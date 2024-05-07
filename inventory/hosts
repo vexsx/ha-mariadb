@@ -1,0 +1,6 @@
+[mariadbs]
+mariadb1 ansible_host=192.168.78.158
+mariadb2 ansible_host=192.168.78.132
+
+[maxscales]
+maxscale ansible_host=192.168.78.156

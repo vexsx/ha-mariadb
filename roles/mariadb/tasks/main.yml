@@ -1,0 +1,58 @@
+---
+
+# Setup mariadb
+- name: Install mariadb and dependencies
+  apt:
+    update_cache: yes
+    pkg:
+      - mariadb-server
+      - python3
+
+- name: Install PyMySQL Python module
+  pip:
+    name: pymysql
+
+- name: Secure MariaDB installation
+  mysql_user:
+    login_user: root
+    login_password: "{{mariadb_root_pass}}"
+    user: root
+    host_all: yes
+    password: "{{mariadb_root_pass}}"
+    check_implicit_admin: yes
+    priv: "*.*:ALL,GRANT"
+
+
+- name: Stop MariaDB service
+  systemd:
+    name: mariadb
+    state: stopped
+
+
+# Increase "net/core" subsys registered per network namespace
+- name: Increase net.core.somaxconn
+  sysctl: >
+    name=net.core.somaxconn
+    value=65535
+    state=present
+    ignoreerrors=yes
+
+
+# Configure Mariadb galera
+- name: " Add galera.cnf"
+  template:
+    src: galera.cnf.j2
+    dest: /etc/mysql/conf.d/galera.cnf
+    mode: "0644"
+    owner: "nobody"
+  register: galera_cnf
+
+
+- name: Execute galera_new_cluster
+  command: sudo galera_new_cluster
+  when: inventory_hostname == 'mariadb1'
+
+- name: Start MariaDB service
+  systemd:
+    name: mariadb
+    state: started

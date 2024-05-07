@@ -1,0 +1,20 @@
+---
+# - name: Install maria HA cluster
+#   hosts: mariadbs
+#   remote_user: vexsx
+#   serial: 1
+#   become: yes
+#   become_method: sudo
+
+#   roles:
+#     - mariadb
+
+- name: Install maxscale
+  hosts: maxscales
+  remote_user: vexsx
+  serial: 1
+  become: yes
+  become_method: sudo
+
+  roles:
+    - maxscale
