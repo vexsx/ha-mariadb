@@ -18,7 +18,17 @@ address={{ hostvars['mariadb2']['ansible_host'] }}
 port=3306
 protocol=MySQLBackend
  
- 
+{% comment %} add more nodes {% endcomment %}
+
+
+{% comment %} [server3]
+type=server
+address={{ hostvars['mariadb3']['ansible_host'] }}
+port=3306
+protocol=MySQLBackend
+  {% endcomment %}
+
+
 # Monitoring for the servers
 [Galera Monitor]
 type=monitor
@@ -32,7 +42,7 @@ monitor_interval=1000
 [Galera Service]
 type=service
 router=readwritesplit
-servers=server1,server2
+ servers=server1,server2    {% comment %} <= add server3 {% endcomment %}
 user={{ maxscale_user }}
 passwd={{ maxscale_pass }}
  
