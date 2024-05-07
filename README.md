@@ -16,3 +16,7 @@ just edit this files :
 ## after all ✔️
 
 just run `ansible-playbook -i inventory/hosts main.yml --ask-become-pass`
+
+## network diagram
+
+<img src="img/maria-ha.png">
