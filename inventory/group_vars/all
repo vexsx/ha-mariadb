@@ -6,6 +6,3 @@ mariadb_root_pass: "1qaz!QAZ"
 maxscale_user: "vexsx"
 maxscale_pass: "1qaz!QAZ"
 
-# docker
-docker_username: "vexsx"
-docker_password: "p78268060"
