@@ -8,13 +8,13 @@ threads=1
 # Servers
 [server1]
 type=server
-address={{ hostvars['mariadb1']['ansible_host'] }}
+address={{ groups['mariadbs'] | map('extract', hostvars, ['ansible_host']) | first }}
 port=3306
 protocol=MySQLBackend
  
 [server2]
 type=server
-address={{ hostvars['mariadb2']['ansible_host'] }}
+address={{ groups['mariadbs'] | map('extract', hostvars, ['ansible_host']) | nth(1) }}
 port=3306
 protocol=MySQLBackend
  
